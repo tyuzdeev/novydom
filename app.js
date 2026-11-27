@@ -2,37 +2,26 @@
 // или путь к локальному файлу './catalog.csv'
 const SHEET_CSV_URL = '';
 
-// Контакты магазина в MAX для отправки заказов и заявок
+// Прямая ссылка на контакт в MAX (можно заменить на личную ссылку вида https://max.ru/u/...)
 const STORE_MAX_PHONE = '+7 (902) 948-85-95';
-// Если есть прямая ссылка на профиль/чат в MAX (например https://max.ru/u/...), вставьте сюда
-const STORE_MAX_URL = 'https://max.ru/';
+const STORE_MAX_CONTACT_URL = 'https://max.ru/+79029488595';
 
 const PAGE_SIZE = 24;
 
-// Аккуратные векторные иллюстрации по типам товаров (работают всегда и не ломаются,
-// а если в таблице указан URL реального фото в колонке image — подставится реальное фото)
+// Векторные иконки по типам товаров (если в таблице есть URL фото в колонке image — подставится реальное фото)
 const ICON_MAP = {
   faucet: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F1F5F9"/><path d="M36 86H64V66C64 56 72 48 82 48H90V58H82C77.6 58 74 61.6 74 66V86H84V94H26V86H36Z" fill="#64748B"/><path d="M44 48H56V86H44V48Z" fill="#94A3B8"/><rect x="38" y="38" width="28" height="10" rx="5" fill="#475569"/><path d="M84 64C84 64 90 72 90 77C90 80.3 87.3 83 84 83C80.7 83 78 80.3 78 77C78 72 84 64 84 64Z" fill="#38BDF8"/></svg>`,
   valve: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#FEF3C7"/><rect x="20" y="54" width="80" height="20" rx="4" fill="#D97706"/><circle cx="60" cy="64" r="16" fill="#B45309"/><rect x="55" y="34" width="10" height="22" fill="#92400E"/><path d="M36 32C36 28 42 26 60 32C78 26 84 28 84 32C84 36 78 40 60 38C42 40 36 36 36 32Z" fill="#DC2626"/></svg>`,
   pipe: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#EFF6FF"/><path d="M32 34V66C32 77 41 86 52 86H86" stroke="#64748B" stroke-width="14" stroke-linecap="round"/><rect x="22" y="24" width="20" height="12" rx="3" fill="#2563EB"/><rect x="82" y="76" width="12" height="20" rx="3" fill="#2563EB"/></svg>`,
-  cable: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F3F4F6"/><circle cx="60" cy="60" r="30" stroke="#1F2937" stroke-width="12"/><circle cx="60" cy="60" r="18" stroke="#4B5563" stroke-width="4"/><path d="M84 78L98 92" stroke="#D95D24" stroke-width="6" stroke-linecap="round"/><path d="M88 72L102 82" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/></svg>`,
+  cable: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F3F4F6"/><circle cx="60" cy="60" r="30" stroke="#1F2937" stroke-width="12"/><circle cx="60" cy="60" r="18" stroke="#4B5563" stroke-width="4"/><path d="M84 78L98 92" stroke="#C24B1D" stroke-width="6" stroke-linecap="round"/><path d="M88 72L102 82" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/></svg>`,
   breaker: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F8FAFC"/><rect x="34" y="22" width="52" height="76" rx="6" fill="#E2E8F0" stroke="#64748B" stroke-width="3"/><rect x="44" y="52" width="32" height="14" rx="3" fill="#2563EB"/><circle cx="60" cy="34" r="5" fill="#475569"/><circle cx="60" cy="86" r="5" fill="#475569"/><rect x="46" y="70" width="28" height="6" rx="2" fill="#16A34A"/></svg>`,
   socket: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F3F4F6"/><rect x="26" y="26" width="68" height="68" rx="10" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="3"/><circle cx="60" cy="60" r="22" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="2"/><circle cx="51" cy="60" r="4" fill="#1F2937"/><circle cx="69" cy="60" r="4" fill="#1F2937"/></svg>`,
   lamp: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#FEFCE8"/><path d="M60 22C44 22 34 34 34 48C34 58 40 66 46 72V80H74V72C80 66 86 58 86 48C86 34 76 22 60 22Z" fill="#FDE047" stroke="#EAB308" stroke-width="3"/><rect x="48" y="80" width="24" height="12" rx="3" fill="#94A3B8"/><rect x="52" y="92" width="16" height="6" rx="2" fill="#64748B"/></svg>`,
   nails: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F1F5F9"/><g stroke="#475569" stroke-width="5" stroke-linecap="round"><line x1="36" y1="30" x2="36" y2="90"/><line x1="28" y1="30" x2="44" y2="30"/><line x1="60" y1="26" x2="60" y2="94"/><line x1="52" y1="26" x2="68" y2="26"/><line x1="84" y1="34" x2="84" y2="86"/><line x1="76" y1="34" x2="92" y2="34"/></g></svg>`,
   screws: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#F3F4F6"/><rect x="42" y="24" width="36" height="10" rx="3" fill="#1F2937"/><path d="M56 34H64L62 94L60 98L58 94L56 34Z" fill="#374151"/><path d="M52 46L68 42M52 56L68 52M53 66L67 62M54 76L66 72" stroke="#111827" stroke-width="3" stroke-linecap="round"/></svg>`,
   bucket: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#FFF7ED"/><path d="M30 42H90L82 94H38L30 42Z" fill="#374151"/><rect x="26" y="36" width="68" height="8" rx="4" fill="#1F2937"/><path d="M36 38C36 22 84 22 84 38" stroke="#9CA3AF" stroke-width="4" fill="none"/></svg>`,
-  foam: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#FEF2F2"/><rect x="44" y="38" width="32" height="58" rx="6" fill="#D95D24"/><rect x="44" y="54" width="32" height="18" fill="#FEF3C7"/><rect x="52" y="24" width="16" height="14" rx="2" fill="#374151"/><line x1="60" y1="24" x2="78" y2="16" stroke="#374151" stroke-width="3" stroke-linecap="round"/></svg>`,
+  foam: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#FEF2F2"/><rect x="44" y="38" width="32" height="58" rx="6" fill="#C24B1D"/><rect x="44" y="54" width="32" height="18" fill="#FEF3C7"/><rect x="52" y="24" width="16" height="14" rx="2" fill="#374151"/><line x1="60" y1="24" x2="78" y2="16" stroke="#374151" stroke-width="3" stroke-linecap="round"/></svg>`,
   tool: `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="16" fill="#FEF3C7"/><rect x="28" y="36" width="56" height="48" rx="12" fill="#F59E0B" stroke="#B45309" stroke-width="3"/><circle cx="56" cy="60" r="13" fill="#1F2937"/><rect x="84" y="64" width="14" height="12" rx="2" fill="#64748B"/></svg>`
-};
-
-const CAT_ICONS = {
-  'Все': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d95d24" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`,
-  'Сантехника': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
-  'Электрика': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-  'Крепёж': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
-  'Хозтовары': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>`,
-  'Инструмент': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d95d24" stroke-width="2"><path d="M2 20h20"/><path d="M5 16l6-6 4 4 5-5"/></svg>`
 };
 
 function svgToDataUri(svgStr) {
@@ -102,7 +91,6 @@ let viewMode = 'grid';
 let visibleCount = PAGE_SIZE;
 let isStressMode = false;
 
-// Корзина: { [sku]: qty }
 let cart = {};
 try {
   cart = JSON.parse(localStorage.getItem('nd_cart') || '{}');
@@ -113,7 +101,6 @@ try {
 // Элементы DOM
 const searchInput = document.getElementById('searchInput');
 const clearSearch = document.getElementById('clearSearch');
-const categoryTiles = document.getElementById('categoryTiles');
 const sidebarCategories = document.getElementById('sidebarCategories');
 const drawerCategories = document.getElementById('drawerCategories');
 const catalogGrid = document.getElementById('catalogGrid');
@@ -126,12 +113,11 @@ const inStockCheckbox = document.getElementById('inStockOnly');
 const sortSelect = document.getElementById('sortSelect');
 const viewGridBtn = document.getElementById('viewGridBtn');
 const viewListBtn = document.getElementById('viewListBtn');
-const reloadBtn = document.getElementById('reloadBtn');
 const demoStressBtn = document.getElementById('demoStressBtn');
 const brandReset = document.getElementById('brandReset');
 const resetFiltersBtn = document.getElementById('resetFiltersBtn');
 
-// Каталог-дровер
+// Каталог-дровер (мобильный)
 const catalogDrawer = document.getElementById('catalogDrawer');
 const catalogToggleBtn = document.getElementById('catalogToggleBtn');
 const closeCatalogBtn = document.getElementById('closeCatalogBtn');
@@ -161,15 +147,10 @@ const cartBadge = document.getElementById('cartBadge');
 const cartItemsEl = document.getElementById('cartItems');
 const cartFooter = document.getElementById('cartFooter');
 const cartTotalSum = document.getElementById('cartTotalSum');
-const sendCartBtn = document.getElementById('sendCartTgBtn');
+const sendCartMaxBtn = document.getElementById('sendCartMaxBtn');
 const copyCartBtn = document.getElementById('copyCartBtn');
 const clearCartBtn = document.getElementById('clearCartBtn');
 const toastEl = document.getElementById('toast');
-
-// Сразу меняем подписи кнопок на MAX, даже если index.html остался прежним
-if (sendCartBtn) sendCartBtn.textContent = 'Отправить заказ в MAX';
-const photoSubmitBtn = photoForm?.querySelector('button[type="submit"]');
-if (photoSubmitBtn) photoSubmitBtn.textContent = 'Отправить менеджеру в MAX';
 
 let toastTimer = null;
 function showToast(text) {
@@ -181,12 +162,14 @@ function showToast(text) {
   }, 3200);
 }
 
-function openMaxWithText(text) {
+// Переход напрямую к контакту в MAX + копирование текста сообщения
+function openMaxContact(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).catch(() => {});
   }
-  showToast('Текст скопирован! Отправьте его в MAX на ' + STORE_MAX_PHONE);
-  window.open(STORE_MAX_URL, '_blank', 'noopener');
+  showToast('Текст скопирован! Открываем чат MAX (' + STORE_MAX_PHONE + ')');
+  const url = STORE_MAX_CONTACT_URL + '?text=' + encodeURIComponent(text);
+  window.open(url, '_blank', 'noopener');
 }
 
 function escapeHtml(str) {
@@ -197,7 +180,6 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// Расстояние Левенштейна для поиска с опечатками
 function levenshtein(a, b) {
   if (Math.abs(a.length - b.length) > 2) return 3;
   const matrix = [];
@@ -230,8 +212,7 @@ function getMatchScore(product, query) {
   const queryWords = q.split(/\s+/).filter(Boolean);
   const targetWords = (name + ' ' + sku + ' ' + cat).split(/[\s\-/,"()]+/).filter(Boolean);
 
-  const allIncluded = queryWords.every(qw => targetWords.some(tw => tw.includes(qw)));
-  if (allIncluded) return 2;
+  if (queryWords.every(qw => targetWords.some(tw => tw.includes(qw)))) return 2;
 
   let matched = 0;
   for (const qw of queryWords) {
@@ -246,7 +227,6 @@ function getMatchScore(product, query) {
   return matched > 0 ? 1 : 0;
 }
 
-// Генератор 8 000 позиций для демонстрации производительности клиенту
 function generateStressCatalog() {
   const sizes = ['10 мм', '15 мм', '20 мм', '25 мм', '32 мм', '40 мм', '50 мм', '1/2"', '3/4"', '1"'];
   const brands = ['IEK', 'Valtec', 'Зубр', 'ТехноНиколь', 'Makita', 'TDM', 'КВТ', 'Stayer'];
@@ -276,7 +256,7 @@ function loadProducts() {
   if (!SHEET_CSV_URL) {
     allProducts = isStressMode ? generateStressCatalog() : DEMO_PRODUCTS;
     syncStatus.textContent = isStressMode
-      ? 'Тест нагрузки: 8 000 поз.'
+      ? 'Тест: 8 000 поз.'
       : 'Демо-база (' + allProducts.length + ' поз.)';
     renderCategories();
     renderCatalog();
@@ -284,7 +264,7 @@ function loadProducts() {
     return;
   }
 
-  syncStatus.textContent = 'Обновление...';
+  syncStatus.textContent = 'Загрузка...';
   const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
 
   Papa.parse(url, {
@@ -305,14 +285,13 @@ function loadProducts() {
           desc: String(row.desc || row['Описание'] || '').trim()
         }));
 
-      const now = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-      syncStatus.textContent = 'Таблица обновлена в ' + now;
+      syncStatus.textContent = 'Актуально';
       renderCategories();
       renderCatalog();
       updateCartUI();
     },
     error: function() {
-      syncStatus.textContent = 'Ошибка таблицы (демо)';
+      syncStatus.textContent = 'Демо-база';
       allProducts = DEMO_PRODUCTS;
       renderCategories();
       renderCatalog();
@@ -336,18 +315,6 @@ function renderCategories() {
   }
   const cats = Object.keys(counts);
 
-  // Плитки сверху
-  categoryTiles.innerHTML = cats.map(cat => `
-    <button type="button" class="cat-tile ${cat === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(cat)}">
-      <div class="cat-tile-icon">${CAT_ICONS[cat] || CAT_ICONS['Все']}</div>
-      <div>
-        <div class="cat-tile-name">${escapeHtml(cat)}</div>
-        <div class="cat-tile-count">${counts[cat]} поз.</div>
-      </div>
-    </button>
-  `).join('');
-
-  // Сайдбар + мобильный дровер
   const listHtml = cats.map(cat => `
     <button type="button" class="sidebar-btn ${cat === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(cat)}">
       <span>${escapeHtml(cat)}</span>
@@ -392,7 +359,7 @@ function createCardHtml(item) {
       <div class="product-info-col">
         <div class="product-meta">
           <span>${escapeHtml(item.category)}</span>
-          <button class="sku-btn" type="button" data-copy-sku="${escapeHtml(item.sku)}" title="Нажмите, чтобы скопировать артикул">
+          <button class="sku-btn" type="button" data-copy-sku="${escapeHtml(item.sku)}" title="Скопировать артикул">
             ${escapeHtml(item.sku)}
           </button>
         </div>
@@ -477,7 +444,6 @@ function renderCatalog() {
   loadMoreWrap.hidden = rendered >= totalFound;
 }
 
-// Делегирование кликов по сетке товаров
 catalogGrid.addEventListener('click', e => {
   const copyBtn = e.target.closest('[data-copy-sku]');
   if (copyBtn) {
@@ -510,7 +476,6 @@ catalogGrid.addEventListener('click', e => {
   }
 });
 
-// Карточка товара (модалка)
 function openProductModal(sku) {
   const item = allProducts.find(p => p.sku === sku);
   if (!item) return;
@@ -543,7 +508,7 @@ function openProductModal(sku) {
 
         <div class="prod-modal-actions">
           <button class="btn-primary" style="flex:1;" type="button" id="modalAddBtn">Добавить в заказ</button>
-          <button class="btn-outline" type="button" id="modalAskMaxBtn">Спросить в MAX</button>
+          <button class="btn-outline" type="button" id="modalAskMaxBtn">Написать в MAX</button>
         </div>
       </div>
     </div>
@@ -552,11 +517,11 @@ function openProductModal(sku) {
   document.getElementById('modalAddBtn').addEventListener('click', () => {
     changeCartQty(item.sku, 1);
     productModal.hidden = true;
-    showToast('Добавлено в список заказа');
+    showToast('Добавлено в заказ');
   });
 
   document.getElementById('modalAskMaxBtn').addEventListener('click', () => {
-    openMaxWithText(askText);
+    openMaxContact(askText);
   });
 
   productModal.hidden = false;
@@ -565,7 +530,6 @@ function openProductModal(sku) {
 closeProductBtn.addEventListener('click', () => (productModal.hidden = true));
 productBackdrop.addEventListener('click', () => (productModal.hidden = true));
 
-// Логика корзины
 function saveCart() {
   try {
     localStorage.setItem('nd_cart', JSON.stringify(cart));
@@ -600,7 +564,7 @@ function updateCartUI() {
   cartTotalSum.textContent = totalSum.toLocaleString('ru-RU') + ' ₽';
 
   if (rows.length === 0) {
-    cartItemsEl.innerHTML = '<div class="cart-empty">Список заказа пуст.<br>Добавляйте нужные позиции из каталога, чтобы отправить их менеджеру одним сообщением в MAX.</div>';
+    cartItemsEl.innerHTML = '<div class="cart-empty">Список заказа пуст.<br>Добавляйте нужные товары, чтобы отправить их менеджеру в MAX одним сообщением.</div>';
     cartFooter.hidden = true;
     return;
   }
@@ -608,11 +572,9 @@ function updateCartUI() {
   cartFooter.hidden = false;
   cartItemsEl.innerHTML = rows.map(({ prod, qty }) => `
     <div class="cart-item">
-      <div class="cart-item-top">
-        <div>
-          <div class="cart-item-name">${escapeHtml(prod.name)}</div>
-          <div class="cart-item-sku">Арт: ${escapeHtml(prod.sku)} • ${prod.price.toLocaleString('ru-RU')} ₽ / ${escapeHtml(prod.unit)}</div>
-        </div>
+      <div>
+        <div class="cart-item-name">${escapeHtml(prod.name)}</div>
+        <div class="cart-item-sku">Арт: ${escapeHtml(prod.sku)} • ${prod.price.toLocaleString('ru-RU')} ₽ / ${escapeHtml(prod.unit)}</div>
       </div>
       <div class="cart-item-bottom">
         <div class="cart-mini-qty">
@@ -652,8 +614,8 @@ function buildOrderText() {
   return lines.join('\n');
 }
 
-sendCartBtn.addEventListener('click', () => {
-  openMaxWithText(buildOrderText());
+sendCartMaxBtn.addEventListener('click', () => {
+  openMaxContact(buildOrderText());
 });
 
 copyCartBtn.addEventListener('click', () => {
@@ -676,12 +638,10 @@ openCartBtn.addEventListener('click', () => {
 closeCartBtn.addEventListener('click', () => (cartDrawer.hidden = true));
 cartBackdrop.addEventListener('click', () => (cartDrawer.hidden = true));
 
-// Каталог-дровер
 catalogToggleBtn.addEventListener('click', () => (catalogDrawer.hidden = false));
 closeCatalogBtn.addEventListener('click', () => (catalogDrawer.hidden = true));
 catalogBackdrop.addEventListener('click', () => (catalogDrawer.hidden = true));
 
-// Поиск, фильтры, сортировка
 let searchTimer = null;
 searchInput.addEventListener('input', () => {
   clearSearch.hidden = !searchInput.value;
@@ -732,14 +692,9 @@ loadMoreBtn.addEventListener('click', () => {
   renderCatalog();
 });
 
-reloadBtn.addEventListener('click', () => {
-  loadProducts();
-  showToast('Данные каталога обновлены');
-});
-
 demoStressBtn.addEventListener('click', () => {
   isStressMode = !isStressMode;
-  demoStressBtn.textContent = isStressMode ? 'Вернуть 30 поз.' : 'Тест 8 000 товаров';
+  demoStressBtn.textContent = isStressMode ? 'Вернуть 30 поз.' : 'Проверить на 8 000 товарах';
   visibleCount = PAGE_SIZE;
   loadProducts();
   showToast(isStressMode ? 'Загружено 8 000 тестовых позиций' : 'Возвращена базовая демо-витрина');
@@ -770,7 +725,7 @@ function openPhotoModal() {
   photoModal.hidden = false;
 }
 
-['openPhotoBtn', 'heroPhotoBtn', 'sidebarPhotoBtn', 'emptyPhotoBtn'].forEach(id => {
+['heroPhotoBtn', 'emptyPhotoBtn'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('click', openPhotoModal);
 });
@@ -798,7 +753,7 @@ photoForm.addEventListener('submit', e => {
   if (comment) parts.push('Комментарий: ' + comment);
   if (phone) parts.push('Телефон: ' + phone);
 
-  openMaxWithText(parts.join('\n'));
+  openMaxContact(parts.join('\n'));
   photoModal.hidden = true;
 });
 
