@@ -4,7 +4,7 @@ const SHEET_CSV_URL = '';
 
 // Прямая ссылка на контакт в MAX (можно заменить на личную ссылку вида https://max.ru/u/...)
 const STORE_MAX_PHONE = '+7 (902) 948-85-95';
-const STORE_MAX_CONTACT_URL = 'https://max.ru/+79029488595';
+const STORE_MAX_CONTACT_URL = 'https://max.ru/u/f9LHodD0cOLr0v3L6LOkzK1fz1LyBsagOiRJVbUWy6mIz5bQH5DUnVUcJ28';
 
 const PAGE_SIZE = 24;
 
@@ -168,8 +168,8 @@ function openMaxContact(text) {
     navigator.clipboard.writeText(text).catch(() => {});
   }
   showToast('Текст скопирован! Открываем чат MAX (' + STORE_MAX_PHONE + ')');
-  const url = STORE_MAX_CONTACT_URL + '?text=' + encodeURIComponent(text);
-  window.open(url, '_blank', 'noopener');
+  showToast('Текст скопирован! Открываем чат MAX (' + STORE_MAX_PHONE + ')');
+  window.open(STORE_MAX_CONTACT_URL, '_blank', 'noopener');
 }
 
 function escapeHtml(str) {
