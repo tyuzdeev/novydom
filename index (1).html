@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новый Дом — каталог стройматериалов, сантехники и электрики</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!-- Верхняя инфо-полоса -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="topbar-left">
+        <span>Магазин «Новый Дом» • Пн–Вс 09:00–19:00</span>
+        <span class="topbar-sep">•</span>
+        <span>Самовывоз и доставка по городу</span>
+      </div>
+      <div class="topbar-right">
+        <a href="tel:+79029488595" class="topbar-link">+7 (902) 948-85-95</a>
+        <span class="topbar-sep">•</span>
+        <button id="demoStressBtn" class="topbar-btn" type="button" title="Проверить скорость работы на 8 000 позициях">
+          Тест 8 000 товаров
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Основная шапка -->
+  <header class="header">
+    <div class="container header-main">
+      <a href="#" class="brand" id="brandReset">
+        <span class="brand-mark">НД</span>
+        <div>
+          <div class="brand-name">Новый Дом</div>
+          <div class="brand-sub">Сантехника • Электрика • Крепёж</div>
+        </div>
+      </a>
+
+      <button id="catalogToggleBtn" class="btn-catalog" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <span>Каталог</span>
+      </button>
+
+      <div class="search-wrap">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Найти товар или артикул (например: смеситель, кабель, гвозди)..."
+          autocomplete="off"
+        >
+        <button id="clearSearch" class="clear-btn" type="button" hidden>&times;</button>
+      </div>
+
+      <div class="header-actions">
+        <button id="openPhotoBtn" class="btn-photo" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span>По фото</span>
+        </button>
+
+        <button id="openCartBtn" class="btn-cart" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-label">Заказ</span>
+          <span id="cartBadge" class="cart-badge" hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Выпадающий/мобильный каталог разделов -->
+  <div id="catalogDrawer" class="drawer" hidden>
+    <div class="drawer-backdrop" id="catalogBackdrop"></div>
+    <div class="drawer-panel drawer-left">
+      <div class="drawer-head">
+        <h2>Категории товаров</h2>
+        <button id="closeCatalogBtn" class="icon-close" type="button">&times;</button>
+      </div>
+      <div id="drawerCategories" class="drawer-cat-list"></div>
+    </div>
+  </div>
+
+  <!-- Основной контент -->
+  <main class="container main-wrap">
+
+    <!-- Баннер / промо-полоса -->
+    <section class="hero-strip">
+      <div class="hero-text">
+        <h1>Всё для ремонта и дома в наличии</h1>
+        <p>Актуальные цены и остатки напрямую из базы магазина. Не знаете точное название детали? Просто отправьте фото — подберём за 5 минут.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="heroPhotoBtn" class="btn-primary" type="button">Подобрать по фото</button>
+        <button id="reloadBtn" class="btn-outline" type="button">Обновить остатки</button>
+      </div>
+    </section>
+
+    <!-- Плитки категорий -->
+    <section class="cat-tiles-section">
+      <div id="categoryTiles" class="cat-tiles"></div>
+    </section>
+
+    <!-- Рабочая область: сайдбар + каталог -->
+    <div class="catalog-layout">
+      <!-- Боковое меню категорий (только ПК) -->
+      <aside class="sidebar">
+        <div class="sidebar-box">
+          <div class="sidebar-title">Разделы каталога</div>
+          <div id="sidebarCategories" class="sidebar-list"></div>
+        </div>
+
+        <div class="sidebar-box sidebar-help">
+          <div class="sidebar-title">Подбор по фото</div>
+          <p>Сломался кран, нужна прокладка или редкий крепёж? Сфотографируйте деталь — подскажем, есть ли в наличии.</p>
+          <button id="sidebarPhotoBtn" class="btn-primary btn-full" type="button">Отправить фото</button>
+        </div>
+      </aside>
+
+      <!-- Правая колонка с фильтрами и товарами -->
+      <section class="catalog-content">
+        <!-- Панель фильтров и сортировки -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <span id="resultsCount" class="results-count">Загрузка...</span>
+            <span id="syncStatus" class="sync-pill">Демо-база</span>
+          </div>
+
+          <div class="toolbar-right">
+            <label class="stock-toggle">
+              <input type="checkbox" id="inStockOnly">
+              <span>Только в наличии</span>
+            </label>
+
+            <select id="sortSelect" class="sort-select" aria-label="Сортировка">
+              <option value="default">По умолчанию</option>
+              <option value="price-asc">Сначала дешевле</option>
+              <option value="price-desc">Сначала дороже</option>
+              <option value="name-asc">По названию (А–Я)</option>
+            </select>
+
+            <div class="view-switch" role="group" aria-label="Вид списка">
+              <button id="viewGridBtn" class="view-btn active" type="button" title="Сетка">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                  <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                  <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                  <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                </svg>
+              </button>
+              <button id="viewListBtn" class="view-btn" type="button" title="Список (прайс)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <circle cx="4" cy="6" r="1"></circle>
+                  <circle cx="4" cy="12" r="1"></circle>
+                  <circle cx="4" cy="18" r="1"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Сетка/список товаров -->
+        <div id="catalogGrid" class="catalog-grid"></div>
+
+        <!-- Пустое состояние -->
+        <div id="emptyState" class="empty-state" hidden>
+          <h3>По этому запросу ничего не нашлось</h3>
+          <p>Попробуйте сократить запрос или отправьте фото нужной детали — менеджер проверит наличие на складе.</p>
+          <div class="empty-actions">
+            <button id="resetFiltersBtn" class="btn-outline" type="button">Сбросить фильтры</button>
+            <button id="emptyPhotoBtn" class="btn-primary" type="button">Отправить фото детали</button>
+          </div>
+        </div>
+
+        <!-- Кнопка "Показать ещё" -->
+        <div id="loadMoreWrap" class="load-more-wrap" hidden>
+          <button id="loadMoreBtn" class="btn-load-more" type="button">Показать ещё</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Подвал -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">Магазин «Новый Дом»</div>
+        <p class="footer-note">Сантехника, электрика, крепёж, хозтовары и инструмент. Цены и остатки обновляются из учётной базы.</p>
+      </div>
+      <div class="footer-contacts">
+        <a href="tel:+79029488595">+7 (902) 948-85-95</a>
+        <span>Ежедневно 09:00 – 19:00</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модалка карточки товара -->
+  <div id="productModal" class="modal" hidden>
+    <div class="modal-backdrop" id="productBackdrop"></div>
+    <div class="modal-window modal-product">
+      <button id="closeProductBtn" class="modal-close-float" type="button">&times;</button>
+      <div id="productModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Модалка подбора по фото -->
+  <div id="photoModal" class="modal" hidden>
+    <div class="modal-backdrop" id="photoBackdrop"></div>
+    <div class="modal-window">
+      <div class="modal-head">
+        <h2>Подбор детали по фото</h2>
+        <button id="closePhotoBtn" class="icon-close" type="button">&times;</button>
+      </div>
+
+      <form id="photoForm" class="photo-form">
+        <p class="form-note">
+          Сфотографируйте деталь, упаковку или место поломки. Менеджер посмотрит наличие в магазине и сразу назовёт цену.
+        </p>
+
+        <label class="file-drop" for="photoInput">
+          <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+          <span id="fileLabelText">Нажмите, чтобы выбрать или сфотографировать деталь</span>
+          <img id="photoPreview" class="photo-preview" alt="Превью фото" hidden>
+        </label>
+
+        <textarea
+          id="photoComment"
+          rows="3"
+          placeholder="Комментарий (например: нужна такая же прокладка 1/2 или аналог)"
+        ></textarea>
+
+        <input
+          type="tel"
+          id="photoPhone"
+          placeholder="Ваш телефон для ответа (необязательно)"
+        >
+
+        <button type="submit" class="btn-primary btn-full">Отправить менеджеру в Telegram</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Выдвижная корзина / список заказа -->
+  <div id="cartDrawer" class="drawer" hidden>
+    <div class="drawer-backdrop" id="cartBackdrop"></div>
+    <div class="drawer-panel drawer-right">
+      <div class="drawer-head">
+        <h2>Список заказа</h2>
+        <button id="closeCartBtn" class="icon-close" type="button">&times;</button>
+      </div>
+
+      <div id="cartItems" class="cart-items"></div>
+
+      <div id="cartFooter" class="cart-footer" hidden>
+        <div class="cart-total-row">
+          <span>Итого ориентировочно:</span>
+          <strong id="cartTotalSum">0 ₽</strong>
+        </div>
+
+        <input type="tel" id="cartPhone" class="cart-input" placeholder="Ваш телефон (необязательно)">
+        <textarea id="cartComment" class="cart-input" rows="2" placeholder="Комментарий (самовывоз / доставка)"></textarea>
+
+        <div class="cart-actions">
+          <button id="sendCartTgBtn" class="btn-primary btn-full" type="button">Отправить заказ в Telegram</button>
+          <div class="cart-sub-actions">
+            <button id="copyCartBtn" class="btn-outline" type="button">Скопировать список</button>
+            <button id="clearCartBtn" class="btn-outline btn-danger" type="button">Очистить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Всплывающее уведомление (тост) -->
+  <div id="toast" class="toast" hidden></div>
+
+</body>
+</html>
