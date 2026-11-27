@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новый Дом — каталог товаров</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <header class="header">
+    <div class="container">
+      <div class="header-top">
+        <div>
+          <h1 class="logo">Новый Дом</h1>
+          <p class="subtitle">Сантехника, электрика, крепёж и хозтовары</p>
+        </div>
+        <button id="reloadBtn" class="btn-outline" type="button">Обновить</button>
+      </div>
+
+      <div class="search-row">
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Поиск по названию или артикулу..."
+            autocomplete="off"
+          >
+          <button id="clearSearch" class="clear-btn" type="button" hidden>&times;</button>
+        </div>
+        <button id="openPhotoBtn" class="btn-photo" type="button">По фото</button>
+      </div>
+
+      <nav id="categories" class="cat-list"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="status-bar">
+      <span id="resultsCount">Загрузка каталога...</span>
+      <span id="syncStatus" class="sync-status">Демо-база</span>
+    </div>
+
+    <div id="catalogGrid" class="catalog-grid"></div>
+
+    <div id="emptyState" class="empty-state" hidden>
+      <p>По вашему запросу ничего не нашлось.</p>
+      <p class="empty-hint">Попробуйте написать проще или отправьте фото детали — подберём вручную.</p>
+      <button id="emptyPhotoBtn" class="btn-primary" type="button">Отправить фото детали</button>
+    </div>
+
+    <div id="loadMoreWrap" class="load-more-wrap" hidden>
+      <button id="loadMoreBtn" class="btn-load-more" type="button">Показать ещё</button>
+    </div>
+  </main>
+
+  <!-- Модалка поиска по фото -->
+  <div id="photoModal" class="modal" hidden>
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2>Подбор детали по фото</h2>
+        <button id="closePhotoBtn" class="modal-close" type="button">&times;</button>
+      </div>
+
+      <form id="photoForm" class="photo-form">
+        <p class="form-note">
+          Сфотографируйте деталь, упаковку или место поломки — менеджер посмотрит наличие и назовёт цену.
+        </p>
+
+        <label class="file-drop" for="photoInput">
+          <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+          <span id="fileLabelText">Нажмите, чтобы выбрать или сделать фото</span>
+          <img id="photoPreview" class="photo-preview" alt="Превью" hidden>
+        </label>
+
+        <textarea
+          id="photoComment"
+          rows="3"
+          placeholder="Комментарий (например: нужна такая же прокладка 1/2 или аналог)"
+        ></textarea>
+
+        <input
+          type="tel"
+          id="photoPhone"
+          placeholder="Ваш телефон для ответа (необязательно)"
+        >
+
+        <button type="submit" class="btn-primary btn-full">Отправить менеджеру</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
